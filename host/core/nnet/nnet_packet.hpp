@@ -34,6 +34,13 @@ public:
             printf("There are duplication in tensor names!\n");
         }
     }
+    ~NNetPacket()
+    {
+        for(auto data : _tensors_raw_data)
+        {
+            printf("%d seq no meta freed!\n",data->getSeqNo());
+        }
+    }
 
 
 #ifdef HOST_PYTHON_MODULE
@@ -66,11 +73,17 @@ public:
         return _tensor_entry_container;
     }
 
+    int getSeqNo()
+    {
+        if(_tensors_raw_data.size()>1) printf("toooooooooo much \n");
+        int seqNo = _tensors_raw_data[0]->getSeqNo();
+        return seqNo;
+    }
+
 private:
     std::shared_ptr<TensorEntryContainer>              _tensor_entry_container;
 
           std::vector<std::shared_ptr<HostDataPacket>> _tensors_raw_data;
     const std::vector<TensorInfo>*                     _tensors_info                = nullptr;
-
     std::unordered_map<std::string, unsigned> _tensor_name_to_index;
 };

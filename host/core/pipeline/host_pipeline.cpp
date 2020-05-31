@@ -44,19 +44,24 @@ void HostPipeline::onNewData(
             data.data,
             info.name,
             info.getDimensionsForSize(data.size),
-            info.elem_size
+            info.elem_size,
+            data.packet_number
             ));
 
     if (!_data_queue_lf.push(host_data))
-    {
-        std::unique_lock<std::mutex> guard(q_lock);
-        _data_queue_lf.pop();
-        guard.unlock();
-        if (!_data_queue_lf.push(host_data))
-        {
-            std::cerr << "Data queue is full " << info.name << ":\n";
-        }
+    {            
+        std::cout << "added to queue " << data.packet_number << " " << info.name << ":\n";
+
+        // std::unique_lock<std::mutex> guard(q_lock);
+        // _data_queue_lf.pop();
+        // guard.unlock();
+        // if (!_data_queue_lf.push(host_data))
+        // {
+        //     std::cerr << "Data queue is full " << info.name << ":\n";
+        // }
     }
+
+
 
     // std::cout << "===> onNewData " << t.ellapsed_us() << " us\n";
 }

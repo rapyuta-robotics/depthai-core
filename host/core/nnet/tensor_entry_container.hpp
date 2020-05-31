@@ -36,6 +36,13 @@ public:
         return number;
     }
 
+    int getSeqNo()
+    {
+        if(_tensors_raw_data.size()>1) printf("toooooooooo much \n");
+        int seqNo = _tensors_raw_data[0]->getSeqNo();
+        return seqNo;
+    }
+
     std::vector<TensorEntry> getByIndex(unsigned entry_index)
     {
         assert(nullptr != _tensors_info);
@@ -62,6 +69,7 @@ public:
             te.properties_number = entry_byte_size / te.output_properties_type_size;
             te.nnet_input_width  = ti.nnet_input_width;
             te.nnet_input_height = ti.nnet_input_height;
+            te.seqNo = getSeqNo();
 
             if (ti.output_properties_dimensions.size() == 1)
             {

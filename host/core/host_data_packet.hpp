@@ -23,7 +23,6 @@ namespace py = pybind11;
 #endif
 
 
-
 struct HostDataPacket
 {
     HostDataPacket(
@@ -31,7 +30,8 @@ struct HostDataPacket
         void* in_data,
         const std::string& stream_name_,
         std::vector<int> dimensions_,
-        int elem_size_
+        int elem_size_,
+        int packet_number
     )
         : stream_name(stream_name_)
         , dimensions(dimensions_)
@@ -55,8 +55,15 @@ struct HostDataPacket
 
         data.resize(frameSize);
         memcpy(data.data(), in_data, frameSize);
-
+        _packet_number = packet_number;
         constructor_timer = Timer();
+    }
+
+    ~HostDataPacket()
+    {
+        // std::cout << constructor_timer.ellapsed_ms() << " seq no " << _packet_number << std::endl;
+        std::cout << "removed from queue " << _packet_number << " " << stream_name << ":\n";
+
     }
 
     unsigned size()
@@ -67,6 +74,11 @@ struct HostDataPacket
     const unsigned char* getData() const
     {
         return data.data();
+    }
+
+    int getSeqNo()
+    {
+        return _packet_number;
     }
 
 #ifdef HOST_PYTHON_MODULE
@@ -155,6 +167,8 @@ struct HostDataPacket
     std::string stream_name;
     const std::vector<int> dimensions;
     int elem_size;
+    int _packet_number;
 
     Timer constructor_timer;
+
 };

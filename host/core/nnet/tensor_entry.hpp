@@ -16,6 +16,7 @@ struct TensorEntry
     unsigned             properties_number           = 0;
     int                  nnet_input_width            = 0;
     int                  nnet_input_height           = 0;
+    int                  seqNo                       = -1;
 
     const std::unordered_map<std::string, unsigned>*              output_property_key_string_to_index   = nullptr;
     const std::vector<std::unordered_map<std::string, unsigned>>* output_property_value_string_to_index = nullptr;
@@ -34,7 +35,10 @@ struct TensorEntry
         const uint16_t* float_ptr = (uint16_t*) void_ptr;
         return float16to32(*float_ptr);
     }
-
+    int getSeqNo()
+    {
+        return seqNo;
+    }
     float getFloat(const std::string &str_index) const
     {
         assert(output_properties_type == Type::F16); // TODO: remove this

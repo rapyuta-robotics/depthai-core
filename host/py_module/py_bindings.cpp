@@ -840,6 +840,7 @@ PYBIND11_MODULE(depthai, m)
         .def("size", &HostDataPacket::size)
         .def("getData", &HostDataPacket::getPythonNumpyArray, py::return_value_policy::take_ownership)
         .def("getDataAsStr", &HostDataPacket::getDataAsString, py::return_value_policy::take_ownership)
+        .def("getSeqNo", &HostDataPacket::getSeqNo, py::return_value_policy::take_ownership)
         .def("getMetadata", &HostDataPacket::getMetadata)
         ;
 
@@ -866,6 +867,7 @@ PYBIND11_MODULE(depthai, m)
 
     // for NNET_PACKET in nnet_packets:
     py::class_<NNetPacket, std::shared_ptr<NNetPacket>>(m, "NNetPacket")
+        .def("getSeqNo", &NNetPacket::getSeqNo, py::return_value_policy::take_ownership)
         .def("get_tensor", &NNetPacket::getTensor, py::return_value_policy::copy)
         .def("get_tensor", &NNetPacket::getTensorByName, py::return_value_policy::copy)
         .def("entries", &NNetPacket::getTensorEntryContainer, py::return_value_policy::copy)
@@ -875,16 +877,20 @@ PYBIND11_MODULE(depthai, m)
     // for te in nnet_packet.ENTRIES()
     py::class_<TensorEntryContainer, std::shared_ptr<TensorEntryContainer>>(m, "TensorEntryContainer")
         .def("__len__", &TensorEntryContainer::size)
+        .def("getSeqNo", &TensorEntryContainer::getSeqNo, py::return_value_policy::take_ownership)
         .def("__getitem__", &TensorEntryContainer::getByIndex)
         .def("__getitem__", &TensorEntryContainer::getByName)
-        .def("__iter__", [](py::object s) { return PyTensorEntryContainerIterator(s.cast<TensorEntryContainer &>(), s); })
+        .def("__iter__", [](py::object s) 
+        { 
+            return PyTensorEntryContainerIterator(s.cast<TensorEntryContainer &>(), s); 
+        }, py::keep_alive<0, 1>()) /* Keep list alive while iterator is used */
         ;
 
     // for e in nnet_packet.entries():
     //     e <--- (type(e) == list)
     py::class_<PyTensorEntryContainerIterator>(m, "PyTensorEntryContainerIterator")
-        .def("__iter__", [](PyTensorEntryContainerIterator &it) -> PyTensorEntryContainerIterator& { return it; })
-        .def("__next__", &PyTensorEntryContainerIterator::next)
+        .def("__iter__", [](PyTensorEntryContainerIterator &it) -> PyTensorEntryContainerIterator& { return it; }, py::keep_alive<0, 1>() /* Keep list alive while iterator is used */)
+        .def("__next__", &PyTensorEntryContainerIterator::next, py::return_value_policy::take_ownership)
         ;
 
     // for e in nnet_packet.entries():
@@ -893,6 +899,7 @@ PYBIND11_MODULE(depthai, m)
         .def("__len__", &TensorEntry::getPropertiesNumber)
         .def("__getitem__", &TensorEntry::getFloat)
         .def("__getitem__", &TensorEntry::getFloatByIndex)
+        .def("getSeqNo", &TensorEntry::getSeqNo)
         ;
 
 
