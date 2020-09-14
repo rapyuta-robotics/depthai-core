@@ -417,7 +417,7 @@ bool Device::init_device(
                     temp.push_back(calib.at(i));
                     if (i % 3 == 2) {
                         printf("\n");
-                        R2_l.push_back(temp);
+                        R2_r.push_back(temp);
                         temp.clear();
                     }
                 }
@@ -470,14 +470,14 @@ bool Device::init_device(
                 for (int i = 0; i < 12; i++) {
                     printf(" %11.6f,", calib.at(i));
                 }
-                d1_l = calib 
+                d1_l = calib;
                 
                 printf("  Calibration Distortion Coeff d2 (Right):\n");
                 calib = g_config_d2h.at("eeprom").at("calib_d2_R").get<std::vector<float>>();
                 for (int i = 0; i < 12; i++) {
                     printf(" %11.6f,", calib.at(i));
                 }
-                d2_r = calib 
+                d2_r = calib; 
                 
 
             }
