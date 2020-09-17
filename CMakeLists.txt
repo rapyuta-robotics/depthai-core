@@ -16,7 +16,7 @@ if(WIN32)
 endif()
 
 set(TARGET_NAME depthai-core)
-project(${TARGET_NAME} VERSION "0.1.0" LANGUAGES CXX C)
+project(${TARGET_NAME} VERSION "0.2.0" LANGUAGES CXX C)
 
 ### Dependency options
 option(DEPTHAI_BOOST_LOCAL "Use locally installed boost libraries" OFF)
@@ -71,6 +71,7 @@ add_library(${TARGET_NAME}
     src/host_json_helper.cpp
     src/types.cpp
     src/device.cpp
+    src/matrix_ops.cpp
     src/bspatch/bspatch.c
 )
 
